@@ -1,25 +1,63 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+	const packageJson = context.extension.packageJSON as Record<string, unknown>;
+	const id = packageJson.name;
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "itssimmons-code-assistant" is now active!');
+	const saveHandler = async (name: string = "world") => {
+		console.log(`Hello ${name}!!!`);
+		context.secrets.store(`${id}-apiKey`, name);
+		const x = await vscode.window.showInputBox({
+			placeHolder: "•••••••••••••••••••••••••••••••••••••••",
+			prompt:
+				"Code Assistant Api Key (Press ‘Enter’ to confirm or ‘Escape’ to cancel)",
+		});
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('itssimmons-code-assistant.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from code-assistant!');
-	});
+		if (x) {
+			context.secrets.store(`${id}-apiKey`, x);
+			console.log(`Api Key Saved: ${x}`);
+		}
+	};
 
-	context.subscriptions.push(disposable);
+	// just for testing
+	const showHandler = async () => {
+		const apiKey = await context.secrets.get(`${id}-apiKey`);
+		vscode.window.showInformationMessage(`Showing Api Key: ${apiKey}`);
+	};
+
+	const whatsSelectedHandler = async () => {
+		const editor = vscode.window.activeTextEditor;
+
+		if (!editor) {
+			return;
+		}
+
+		const selection = editor.document.getText(editor.selection);
+		console.log(selection);
+	};
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand(`${id}.saveSecret`, saveHandler),
+		vscode.commands.registerCommand(`${id}.showSecret`, showHandler),
+		vscode.commands.registerCommand(
+			`${id}.whatsSelected`,
+			whatsSelectedHandler
+		),
+		vscode.languages.registerCodeLensProvider("*", {
+			provideCodeLenses(
+				document: vscode.TextDocument,
+				token: vscode.CancellationToken
+			) {
+				return [
+					new vscode.CodeLens(new vscode.Range(0, 0, 0, 0), {
+						title: "✧˖° Explain Code",
+						command: "foobar.whatsSelected",
+						arguments: [],
+					}),
+				];
+			},
+		})
+	);
 }
 
 // This method is called when your extension is deactivated
