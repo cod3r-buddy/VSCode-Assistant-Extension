@@ -1,4 +1,7 @@
 import * as vscode from "vscode";
+import { CodelensProvider } from "./Codelens.provider";
+
+let disposables: vscode.Disposable[] = [];
 
 export function activate(context: vscode.ExtensionContext) {
 	const packageJson = context.extension.packageJSON as Record<string, unknown>;
@@ -43,22 +46,15 @@ export function activate(context: vscode.ExtensionContext) {
 			`${id}.whatsSelected`,
 			whatsSelectedHandler
 		),
-		vscode.languages.registerCodeLensProvider("*", {
-			provideCodeLenses(
-				document: vscode.TextDocument,
-				token: vscode.CancellationToken
-			) {
-				return [
-					new vscode.CodeLens(new vscode.Range(0, 0, 0, 0), {
-						title: "✧˖° Explain Code",
-						command: "foobar.whatsSelected",
-						arguments: [],
-					}),
-				];
-			},
-		})
+		vscode.languages.registerCodeLensProvider("*", new CodelensProvider())
 	);
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+	if (disposables.length) {
+		disposables.forEach((d) => d.dispose());
+	}
+
+	disposables = [];
+}
