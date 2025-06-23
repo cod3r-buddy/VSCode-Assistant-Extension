@@ -16,14 +16,10 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 	}
 
 	public provideCodeLenses(
-		document: vscode.TextDocument,
-		token: vscode.CancellationToken
-	): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
-		if (
-			vscode.workspace
-				.getConfiguration("codelens-sample")
-				.get("enableCodeLens", true)
-		) {
+		_document: vscode.TextDocument,
+		_token: vscode.CancellationToken
+	): vscode.ProviderResult<vscode.CodeLens[]> {
+		if (vscode.workspace.getConfiguration("cod3r-buddy").get("enable", false)) {
 			this.codeLenses = [];
 
 			const editor = vscode.window.activeTextEditor;
@@ -50,16 +46,12 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 
 	public resolveCodeLens(
 		codeLens: vscode.CodeLens,
-		token: vscode.CancellationToken
-	) {
-		if (
-			vscode.workspace
-				.getConfiguration("codelens-sample")
-				.get("enableCodeLens", true)
-		) {
+		_token: vscode.CancellationToken
+	): vscode.ProviderResult<vscode.CodeLens> {
+		if (vscode.workspace.getConfiguration("cod3r-buddy").get("enable", false)) {
 			codeLens.command = {
 				title: "✧˖° Explain Code",
-				command: "foobar.whatsSelected",
+				command: "cod3r-buddy.explainCode",
 				arguments: [],
 			};
 			return codeLens;

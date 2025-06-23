@@ -1,9 +1,11 @@
 {
-	"name": "foobar",
-	"displayName": "FooBar",
+	"name": "cod3r-buddy",
+	"displayName": "Coder Buddy - AI Assistant for VS Code",
 	"description": "",
 	"version": "0.0.1",
 	"engines": {
+		"node": ">=20.0.0",
+		"pnpm": ">=8.0.0",
 		"vscode": "^1.100.0"
 	},
 	"repository": {
@@ -17,29 +19,61 @@
 		"Programming Languages"
 	],
 	"activationEvents": [
-		"onCommand:foobar.saveSecret",
-		"onCommand:foobar.showSecret",
-		"onCommand:foobar.whatsSelected",
-		"onLanguage:typescript"
+		"onCommand:cod3r-buddy.activate",
+		"onCommand:cod3r-buddy.toggle",
+		"onCommand:cod3r-buddy.explainCode",
+		"onChatParticipant:participantId=chat.cod3r-buddy"
 	],
 	"publisher": "itssimmons",
 	"main": "./dist/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "foobar.saveSecret",
-				"title": "FooBar: Save Secret"
+				"command": "cod3r-buddy.activate",
+				"title": "Coder Buddy: Activate"
 			},
 			{
-				"command": "foobar.showSecret",
-				"title": "FooBar: Show Secret"
+				"command": "cod3r-buddy.toggle",
+				"title": "Coder Buddy: Toggle Extension"
 			},
 			{
-				"command": "foobar.whatsSelected",
-				"title": "FooBar: What's Selected"
+				"command": "cod3r-buddy.explainCode",
+				"title": "Coder Buddy: Explain Code"
 			}
-		]
+		],
+		"chatParticipants": [
+			{
+				"id": "chat.cod3r-buddy",
+				"name": "coder-buddy",
+				"fullName": "Coder Buddy",
+				"description": "This is your Buddy for Code Assistant",
+				"isSticky": true,
+				"commands": [
+					{
+						"name": "explain",
+						"description": "Select a section of your code and get a detailed explanation from your Buddy"
+					}
+				]
+			}
+		],
+		"configuration": {
+			"title": "Coder Buddy",
+			"properties": {
+				"cod3r-buddy.enable": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enable Assistance"
+				},
+				"cod3r-buddy.LLMApiKey": {
+					"type": "string",
+					"description": "In order to make the extension able to generate responses, you'll need to provide your own API Key (this could be optional if you already provide one using the command pallete)"
+				}
+			}
+		}
 	},
+	"extensionDependencies": [
+		"github.copilot-chat"
+	],
 	"scripts": {
 		"vscode:prepublish": "pnpm run package",
 		"compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
