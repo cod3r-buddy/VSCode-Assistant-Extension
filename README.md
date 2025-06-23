@@ -1,6 +1,6 @@
-# itssimmons-code-assistant README
+# README
 
-This is the README for your extension "itssimmons-code-assistant". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension. After writing up a brief description, we recommend including the following sections.
 
 ## Features
 
